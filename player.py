@@ -1,7 +1,8 @@
 import pygame
 from sprite import StaticSprite
 from status_bars import StatusBars  # Assuming StatusBars is saved in status_bars.py
-from attack_direction_indicator import AttackDirectionIndicator  # Assuming the new class is saved in attack_direction_indicator.py
+from attack_direction_indicator import \
+    AttackDirectionIndicator  # Assuming the new class is saved in attack_direction_indicator.py
 
 
 class Player(StaticSprite):
@@ -59,7 +60,6 @@ class Player(StaticSprite):
         keys = pygame.key.get_pressed()  # Get the current state of all keys
         self.handle_input(keys)  # Handle movement input
 
-
         self.handle_axis_movement(delta_time, 0, collidable_tiles + enemies)  # x-axis
         self.handle_axis_movement(delta_time, 1, collidable_tiles + enemies)  # y-axis
 
@@ -68,7 +68,6 @@ class Player(StaticSprite):
 
         # Update the attack direction indicator
         self.attack_indicator.update()
-        self.interact_with_doors(keys, doors)
 
     def handle_axis_movement(self, delta_time, axis, collidable_objects):
         direction = self.movement[axis]
@@ -100,13 +99,20 @@ class Player(StaticSprite):
             elif axis == 1:
                 self.rect.y = new_rect.y
 
-    def interact_with_doors(self, keys, doors):
-        if keys[pygame.K_q]:
-            print("Attempt to open door")
-            for door in doors:
-                if self.attack_indicator.rect.colliderect(door.expand_rect()):
-                    print("Collide with door")
-                    door.open = True
+    def interact_with_doors(self, doors):
+        print("Attempt to open door")
+
+        # Calculate the same offsets applied when rendering the doors
+        offset_x = self.screen_width // 2 - self.rect.centerx
+        offset_y = self.screen_height // 2 - self.rect.centery
+
+        # Adjust the attack indicator rect by the offset
+        adjusted_attack_indicator_rect = self.attack_indicator.rect.move(-offset_x, -offset_y)
+
+        for door in doors:
+            if adjusted_attack_indicator_rect.colliderect(door.rect):
+                print("Collide with door")
+                door.open = True
 
     def draw(self, screen):
         """Draw the player sprite centered on the screen."""

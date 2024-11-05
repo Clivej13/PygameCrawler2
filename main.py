@@ -40,6 +40,9 @@ class Game:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:  # Right mouse button is 3
+                if self.map.player:
+                    self.map.player.interact_with_doors(self.map.doors)
 
         # Handle player input
         keys = pygame.key.get_pressed()
