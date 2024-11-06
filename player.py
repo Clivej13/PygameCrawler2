@@ -31,7 +31,7 @@ class Player(StaticSprite):
         )
 
         # Create an instance of AttackDirectionIndicator
-        self.attack_indicator = AttackDirectionIndicator(self.screen_width, self.screen_height)
+        self.attack_indicator = AttackDirectionIndicator(self.screen_width, self.screen_height, distance=50, filepath="img/magicsword.png", width=30, height=60)
 
     def decrease_health(self, amount):
         self.health = max(0, self.health - amount)
@@ -107,7 +107,7 @@ class Player(StaticSprite):
         offset_y = self.screen_height // 2 - self.rect.centery
 
         # Adjust the attack indicator rect by the offset
-        adjusted_attack_indicator_rect = self.attack_indicator.rect.move(-offset_x, -offset_y)
+        adjusted_attack_indicator_rect = self.attack_indicator.sprite.rect.move(-offset_x, -offset_y)
 
         for door in doors:
             if adjusted_attack_indicator_rect.colliderect(door.rect):

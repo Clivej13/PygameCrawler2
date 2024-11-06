@@ -33,7 +33,7 @@ class Map:
                 elif tile_value == 1:
                     # Create the player
                     if not self.player:
-                        self.player = Player(x, y, tile_width, tile_height, filepath="img/player.png")
+                        self.player = Player(x, y, tile_width, tile_height, filepath="img/spellsword.png")
                     self.tiles.append(Floor(x, y, tile_width, tile_height, "img/stone_floor.png", 4, 4))
                 elif tile_value == 2:
                     wall = Wall(x, y, tile_width, tile_height, "img/stone_walls_x.png", 2, 7)
