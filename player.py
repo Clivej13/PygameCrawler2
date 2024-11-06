@@ -31,7 +31,7 @@ class Player(StaticSprite):
         )
 
         # Create an instance of AttackDirectionIndicator
-        self.attack_indicator = AttackDirectionIndicator(self.screen_width, self.screen_height, distance=50, filepath="img/magicsword.png", width=30, height=60)
+        self.attack_indicator = AttackDirectionIndicator(self.screen_width, self.screen_height, distance=25, filepath="img/magicsword.png", width=30, height=60)
 
     def decrease_health(self, amount):
         self.health = max(0, self.health - amount)
