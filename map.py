@@ -62,6 +62,9 @@ class Map:
         # Update all enemies with collision detection against tiles, doors, and other enemies
         for enemy in self.enemies:
             enemy.update(delta_time, self.collidable_tiles, self.enemies, self.player)
+            if enemy.health == 0:
+                print("enemy is dead ")
+                self.enemies.remove(enemy)
 
         for door in self.doors:
             if door.open:

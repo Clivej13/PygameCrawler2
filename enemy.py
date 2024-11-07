@@ -11,12 +11,28 @@ class Enemy(StaticSprite):
         self.state = Enemy.WANDER  # Start with wandering behavior
         self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]  # Random initial direction
         self.chase_range = chase_range  # Distance at which enemy will start chasing player
+        self.health = 50
+        self.max_health = 100
+        self.mana = 50
+        self.max_mana = 100
+        self.xp = 50
+        self.stamina = 50
+        self.max_stamina = 100
 
         # Optional patrol points for patrolling behavior
         if patrol_points:
             self.patrol_points = patrol_points
             self.patrol_index = 0
             self.state = Enemy.PATROL  # Set state to patrol if patrol points are provided
+
+    def decrease_health(self, amount):
+        self.health = max(0, self.health - amount)
+
+    def decrease_mana(self, amount):
+        self.mana = max(0, self.mana - amount)
+
+    def decrease_stamina(self, amount):
+        self.stamina = max(0, self.stamina - amount)
 
     def update(self, delta_time, collidable_tiles, enemies, player):
         # Determine the current state based on player proximity

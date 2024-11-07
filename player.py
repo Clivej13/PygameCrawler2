@@ -1,9 +1,8 @@
+import time
+
 import pygame
 from sprite import StaticSprite
 from status_bars import StatusBars  # Assuming StatusBars is saved in status_bars.py
-from attack_direction_indicator import \
-    AttackDirectionIndicator  # Assuming the new class is saved in attack_direction_indicator.py
-
 
 class Player(StaticSprite):
     def __init__(self, x, y, width, height, filepath=None):
@@ -29,9 +28,6 @@ class Player(StaticSprite):
             self.stamina, self.max_stamina,
             self.xp, self.max_xp
         )
-
-        # Create an instance of AttackDirectionIndicator
-        self.attack_indicator = AttackDirectionIndicator(self.screen_width, self.screen_height, distance=25, filepath="img/magicsword.png", width=30, height=60)
 
     def decrease_health(self, amount):
         self.health = max(0, self.health - amount)
@@ -66,9 +62,6 @@ class Player(StaticSprite):
         # Update the status bar values
         self.status_bars.update_values(self.health, self.mana, self.stamina, self.xp)
 
-        # Update the attack direction indicator
-        self.attack_indicator.update()
-
     def handle_axis_movement(self, delta_time, axis, collidable_objects):
         direction = self.movement[axis]
         if direction != 0:
@@ -99,20 +92,6 @@ class Player(StaticSprite):
             elif axis == 1:
                 self.rect.y = new_rect.y
 
-    def interact_with_doors(self, doors):
-        print("Attempt to open door")
-
-        # Calculate the same offsets applied when rendering the doors
-        offset_x = self.screen_width // 2 - self.rect.centerx
-        offset_y = self.screen_height // 2 - self.rect.centery
-
-        # Adjust the attack indicator rect by the offset
-        adjusted_attack_indicator_rect = self.attack_indicator.sprite.rect.move(-offset_x, -offset_y)
-
-        for door in doors:
-            if adjusted_attack_indicator_rect.colliderect(door.rect):
-                print("Collide with door")
-                door.open = True
 
     def draw(self, screen):
         """Draw the player sprite centered on the screen."""
@@ -120,6 +99,3 @@ class Player(StaticSprite):
                                  screen.get_height() // 2 - self.rect.height // 2))
         # Draw the status bars
         self.status_bars.draw(screen)
-
-        # Draw the attack direction indicator
-        self.attack_indicator.draw(screen)

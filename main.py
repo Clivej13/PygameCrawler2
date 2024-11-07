@@ -12,6 +12,7 @@ pygame.display.set_caption("Player Stays in the Middle")
 
 class Game:
     def __init__(self):
+        self.delta_time = None
         self.clock = pygame.time.Clock()
 
         # Load the map, including player, enemies, and all tiles
@@ -20,13 +21,13 @@ class Game:
     def run(self):
         while True:
             # Calculate delta_time
-            delta_time = self.clock.tick(60) / 1000.0
+            self.delta_time = self.clock.tick(60) / 1000.0
 
             # Handle events, including quit
             self.handle_events()
 
             # Update the game logic
-            self.update(delta_time)
+            self.update()
 
             # Draw everything
             self.draw()
@@ -40,18 +41,20 @@ class Game:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:  # Right mouse button is 3
-                if self.map.player:
-                    self.map.player.interact_with_doors(self.map.doors)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 3:  # Right mouse button is 3
+                    pass
+                if event.button == 1:  # Left mouse button is 1
+                    pass
 
         # Handle player input
         keys = pygame.key.get_pressed()
         if self.map.player:
             self.map.player.handle_input(keys)
 
-    def update(self, delta_time):
+    def update(self):
         # Update map (player, enemies, and any other entities)
-        self.map.update(delta_time)
+        self.map.update(self.delta_time)
 
     def draw(self):
         # Clear the screen
