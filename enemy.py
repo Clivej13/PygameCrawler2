@@ -1,12 +1,18 @@
+import time
+
 import pygame
 import random
+
+from ability import Ability
 from sprite import StaticSprite
 
-class Enemy(StaticSprite):
-    WANDER, PATROL, CHASE = "WANDER", "PATROL", "CHASE"  # Define states for the enemy
 
-    def __init__(self, x, y, width, height, filepath=None, patrol_points=None, chase_range=150, speed=80):
+class Enemy(StaticSprite):
+    WANDER, PATROL, CHASE, STAND = "WANDER", "PATROL", "CHASE", "STAND"  # Define states for the enemy
+
+    def __init__(self, x, y, width, height, filepath=None, patrol_points=None, chase_range=300, speed=80):
         super().__init__(x, y, width, height, filepath)
+        self.player_collision = False
         self.speed = speed  # Enemy speed in pixels per second
         self.state = Enemy.WANDER  # Start with wandering behavior
         self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]  # Random initial direction
@@ -18,12 +24,21 @@ class Enemy(StaticSprite):
         self.xp = 50
         self.stamina = 50
         self.max_stamina = 100
+        self.is_casting = False
+        self.cast_start_time = None
+        self.last_used = 0
+        self.is_target_of = None
 
         # Optional patrol points for patrolling behavior
         if patrol_points:
             self.patrol_points = patrol_points
             self.patrol_index = 0
             self.state = Enemy.PATROL  # Set state to patrol if patrol points are provided
+        self.abilities = [
+            Ability("Claw Swipe", damage=10, mana_cost=5, cooldown=5, melee=True),
+            Ability("Dark Bolt", damage=30, mana_cost=5, cooldown=3, cast_time=5, melee=False, range=300)
+        ]
+        self.target = None
 
     def decrease_health(self, amount):
         self.health = max(0, self.health - amount)
@@ -33,6 +48,25 @@ class Enemy(StaticSprite):
 
     def decrease_stamina(self, amount):
         self.stamina = max(0, self.stamina - amount)
+
+    def use_ability(self, player, collidable_tiles):
+        current_time = time.time()
+        if self.is_casting:
+            if self.current_ability.can_use(current_time, self.player_collision, self, player, collidable_tiles):
+                if self.cast_start_time + self.current_ability.cast_time <= current_time:
+                    self.current_ability.use(current_time, self)
+                    self.mana -= self.current_ability.mana_cost
+                    player.decrease_health(self.current_ability.damage)
+                    self.is_casting = False
+            else:
+                self.is_casting = False
+        else:
+            for ability in self.abilities:
+                if self.target is not None:
+                    if ability.can_use(current_time, self.player_collision, self, player, collidable_tiles):
+                        self.cast_start_time = current_time
+                        self.is_casting = True
+                        self.current_ability = ability
 
     def update(self, delta_time, collidable_tiles, enemies, player):
         # Determine the current state based on player proximity
@@ -45,10 +79,35 @@ class Enemy(StaticSprite):
         # Update based on the current state
         if self.state == Enemy.WANDER:
             self.wander(delta_time, collidable_tiles, enemies)
+            self.target = None
         elif self.state == Enemy.PATROL:
             self.patrol(delta_time, collidable_tiles, enemies)
+            self.target = None
         elif self.state == Enemy.CHASE:
             self.chase(delta_time, collidable_tiles, enemies, player)
+            self.target = player
+        self.use_ability(player, collidable_tiles)
+
+    def draw_casting_bar(self, screen, offset_x, offset_y):
+        """Draw the casting progress bar below the enemy."""
+        if self.is_casting:
+            # Calculate casting progress
+            current_time = time.time()
+            elapsed_time = current_time - self.cast_start_time
+            cast_progress = min(1.0, elapsed_time / self.current_ability.cast_time)
+
+            # Define bar dimensions
+            bar_width = self.rect.width
+            bar_height = 5
+            bar_x = self.rect.x + offset_x
+            bar_y = self.rect.y + self.rect.height + offset_y + 5  # Position below the enemy
+
+            # Draw background bar (in gray)
+            pygame.draw.rect(screen, (100, 100, 100), (bar_x, bar_y, bar_width, bar_height))
+
+            # Draw progress bar (in green)
+            progress_width = bar_width * cast_progress
+            pygame.draw.rect(screen, (0, 255, 0), (bar_x, bar_y, progress_width, bar_height))
 
     def wander(self, delta_time, collidable_tiles, enemies):
         # Set the wander speed
@@ -92,49 +151,51 @@ class Enemy(StaticSprite):
         self.move(delta_time, collidable_tiles, enemies, player, self.speed)
 
     def move(self, delta_time, collidable_tiles, enemies, player, speed):
-        # Calculate potential movement
-        dx = self.direction[0] * speed * delta_time
-        dy = self.direction[1] * speed * delta_time
+        if not self.is_casting:
+            # Calculate potential movement
+            dx = self.direction[0] * speed * delta_time
+            dy = self.direction[1] * speed * delta_time
 
-        # Handle x-axis movement and collision
-        if dx != 0:
-            new_rect = self.rect.copy()
-            new_rect.x += dx
+            # Handle x-axis movement and collision
+            if dx != 0:
+                new_rect = self.rect.copy()
+                new_rect.x += dx
 
-            # Check for collisions with collidable tiles, enemies, or the player
-            if self.collides(new_rect, collidable_tiles, enemies, player):
-                self.direction[0] *= -1  # Reverse direction upon collision
-            else:
-                # No collision, update x position
-                self.rect.x = new_rect.x
+                # Check for collisions with collidable tiles, enemies, or the player
+                if self.collides(new_rect, collidable_tiles, enemies, player):
+                    self.direction[0] *= -1  # Reverse direction upon collision
+                else:
+                    # No collision, update x position
+                    self.rect.x = new_rect.x
 
-        # Handle y-axis movement and collision
-        if dy != 0:
-            new_rect = self.rect.copy()
-            new_rect.y += dy
+            # Handle y-axis movement and collision
+            if dy != 0:
+                new_rect = self.rect.copy()
+                new_rect.y += dy
 
-            # Check for collisions with collidable tiles, enemies, or the player
-            if self.collides(new_rect, collidable_tiles, enemies, player):
-                self.direction[1] *= -1  # Reverse direction upon collision
-            else:
-                # No collision, update y position
-                self.rect.y = new_rect.y
+                # Check for collisions with collidable tiles, enemies, or the player
+                if self.collides(new_rect, collidable_tiles, enemies, player):
+                    self.direction[1] *= -1  # Reverse direction upon collision
+                else:
+                    # No collision, update y position
+                    self.rect.y = new_rect.y
 
     def collides(self, new_rect, collidable_tiles, enemies, player):
-        # Check collision with collidable tiles
+        if player and new_rect.colliderect(player.rect):
+            self.player_collision = True
+            player.enemy_collisions.append(self)
+            return True
+        else:
+            self.player_collision = False
+            if player is not None:
+                if self in player.enemy_collisions:
+                    player.enemy_collisions.remove(self)
         for tile in collidable_tiles:
             if new_rect.colliderect(tile.rect):
                 return True
-
-        # Check collision with other enemies (excluding self)
         for other_enemy in enemies:
             if other_enemy is not self and new_rect.colliderect(other_enemy.rect):
                 return True
-
-        # Check collision with the player
-        if player and new_rect.colliderect(player.rect):
-            return True
-
         return False
 
     def draw(self, screen, player_rect):
@@ -146,3 +207,11 @@ class Enemy(StaticSprite):
         # Adjust the enemy's position based on the calculated offset
         screen_pos = (self.rect.x + offset_x, self.rect.y + offset_y)
         screen.blit(self.image, screen_pos)
+
+        # Draw the casting bar if the enemy is casting
+        self.draw_casting_bar(screen, offset_x, offset_y)
+
+        # If this enemy is selected, draw a highlight
+        if self.is_target_of is not None:
+            pygame.draw.rect(screen, (255, 0, 0), self.rect.move(offset_x, offset_y), 2)
+

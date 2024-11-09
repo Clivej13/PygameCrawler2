@@ -10,6 +10,13 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Player Stays in the Middle")
 
 
+# Set screen dimensions for fullscreen
+# infoObject = pygame.display.Info()
+# WIDTH, HEIGHT = infoObject.current_w, infoObject.current_h
+# screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+# pygame.display.set_caption("Player Stays in the Middle")
+
+
 class Game:
     def __init__(self):
         self.delta_time = None
@@ -42,15 +49,21 @@ class Game:
                 pygame.quit()
                 exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 3:  # Right mouse button is 3
-                    pass
                 if event.button == 1:  # Left mouse button is 1
-                    pass
+                    # Handle left-click to select target
+                    if self.map.player:
+                        mouse_pos = pygame.mouse.get_pos()
+                        self.map.player.select_target(mouse_pos, self.map.enemies)
 
-        # Handle player input
-        keys = pygame.key.get_pressed()
-        if self.map.player:
-            self.map.player.handle_input(keys)
+            # Handle player input for abilities
+            keys = pygame.key.get_pressed()
+            if self.map.player:
+                self.map.player.handle_input(keys)
+                # Ability keys (e.g., 1 for Fireball, 2 for another ability, etc.)
+                if keys[pygame.K_1]:
+                    self.map.player.use_ability(0, self.map.collidable_tiles)
+                elif keys[pygame.K_2]:
+                    self.map.player.use_ability(1, self.map.collidable_tiles)
 
     def update(self):
         # Update map (player, enemies, and any other entities)

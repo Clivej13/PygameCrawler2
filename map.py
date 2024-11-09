@@ -1,4 +1,7 @@
 import json
+import math
+import time
+
 import pygame
 from wall import Wall
 from floor import Floor
@@ -31,7 +34,7 @@ class Map:
                     # Create a Floor tile
                     self.tiles.append(Floor(x, y, tile_width, tile_height, "img/stone_floor.png", 4, 4))
                 elif tile_value == 1:
-                    # Create the player
+                    # Create the waplayer
                     if not self.player:
                         self.player = Player(x, y, tile_width, tile_height, filepath="img/spellsword.png")
                     self.tiles.append(Floor(x, y, tile_width, tile_height, "img/stone_floor.png", 4, 4))
@@ -55,6 +58,10 @@ class Map:
                     self.tiles.append(Floor(x, y, tile_width, tile_height, "img/stone_floor.png", 4, 4))
                     self.collidable_tiles.append(door)  # Add door to collidable tiles list for collision detection
 
+    # In map.py
+    import time
+    import math
+
     def update(self, delta_time):
         # Update player with collision detection against tiles, doors, and enemies
         self.player.update(delta_time, self.collidable_tiles, self.enemies, self.doors)
@@ -62,10 +69,12 @@ class Map:
         # Update all enemies with collision detection against tiles, doors, and other enemies
         for enemy in self.enemies:
             enemy.update(delta_time, self.collidable_tiles, self.enemies, self.player)
+
             if enemy.health == 0:
-                print("enemy is dead ")
+                print("enemy is dead")
                 self.enemies.remove(enemy)
 
+        # Handle door updates
         for door in self.doors:
             if door.open:
                 self.doors.remove(door)
