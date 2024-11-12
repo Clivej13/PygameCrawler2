@@ -1,0 +1,102 @@
+{
+  "items": [
+    {
+      "id": 2,
+      "name": "Leather Armor",
+      "type": "Light Armor",
+      "weight": 7.0,
+      "value": 20,
+      "armor_rating": 10,
+      "tier": "Uncommon",
+      "required_skill": [
+        "Strength",
+        3
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Health Potion",
+      "type": "Consumable",
+      "weight": 0.5,
+      "value": 10,
+      "tier": "Common"
+    },
+    {
+      "id": 4,
+      "name": "Sapphire Gem",
+      "type": "Valuable",
+      "weight": 0.3,
+      "value": 200,
+      "tier": "Rare"
+    },
+    {
+      "id": 5,
+      "name": "War Hammer",
+      "type": "Two Handed",
+      "weight": 5.5,
+      "value": 40,
+      "attack_damage": 40,
+      "tier": "Rare",
+      "required_skill": [
+        "Strength",
+        8
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Iron Body",
+      "type": "Heavy Armor",
+      "weight": 7.0,
+      "value": 20,
+      "armor_rating": 10,
+      "tier": "Common",
+      "required_skill": [
+        "Strength",
+        3
+      ],
+      "src": "adam_iron_body.png"
+    },
+    {
+      "id": 7,
+      "name": "Iron Legs",
+      "type": "Heavy Armor",
+      "weight": 7.0,
+      "value": 20,
+      "armor_rating": 10,
+      "tier": "Common",
+      "required_skill": [
+        "Strength",
+        3
+      ],
+      "src": "adam_iron_legs.png"
+    },
+    {
+      "id": 8,
+      "name": "Iron Shield",
+      "type": "Heavy Armor",
+      "weight": 7.0,
+      "value": 20,
+      "armor_rating": 10,
+      "tier": "Common",
+      "required_skill": [
+        "Strength",
+        3
+      ],
+      "src": "adam_iron_shield.png"
+    },
+    {
+      "id": 9,
+      "name": "Iron Sword",
+      "type": "One Handed",
+      "weight": 7.0,
+      "value": 20,
+      "damage_rating": 10,
+      "tier": "Common",
+      "required_skill": [
+        "Strength",
+        3
+      ],
+      "src": "adam_iron_sword.png"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "inventory": [
+    1,
+    2,
+    3
+  ],
+  "equipped": {
+    "head": 0,
+    "body": 6,
+    "legs": 7,
+    "main_hand": 8,
+    "off_hand": 9
+  },
+  "abilities": []
+}
