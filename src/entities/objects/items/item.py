@@ -1,7 +1,8 @@
 from src.entities.sprite import StaticSprite
 
+
 class Item:
-    def __init__(self, name, item_type, weight, value, attack_damage=None, armor_rating=None, item_id=None, tier=None, required_skill=None, src=None):
+    def __init__(self, name, item_type, weight, value, attack_damage=None, armor_rating=None, item_id=None, tier=None, required_skill=None, src=None, equip_slot=None):
         self.id = item_id
         self.name = name
         self.type = item_type
@@ -12,6 +13,7 @@ class Item:
         self.tier = tier
         self.required_skill = required_skill
         self.src = src  # Source for the item's image
+        self.equip_slot = equip_slot
         self.sprite = None  # StaticSprite instance for the item
 
     def create_sprite(self, x=0, y=0, width=50, height=50):

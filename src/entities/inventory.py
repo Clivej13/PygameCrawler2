@@ -42,3 +42,11 @@ class Inventory:
             print("Inventory items by ID:")
             for item_id in self.items:
                 print(f"Item ID: {item_id}")
+
+    def equip_item(self, slot, item_id):
+        if slot in self.slots:
+            self.slots[slot] = item_id
+            print(f"Equipped item {item_id} in {slot}.")
+        else:
+            print(f"Invalid slot {slot} for equipping item {item_id}.")
+

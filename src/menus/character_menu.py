@@ -17,11 +17,11 @@ class CharacterMenu:
         self.tabs = ["Quests", "Inventory", "Equipment"]
 
         # Create individual tab handlers
-        self.inventory = CharacterMenuInventory(screen_width, item_catalog)
+        self.character_menu_inventory = CharacterMenuInventory(screen_width, item_catalog)
         self.quests = CharacterMenuQuests()
         self.equipment = CharacterMenuEquipment(item_catalog)
 
-    def update(self,player):
+    def update(self, player):
         self.equipment.update_equipment(player)
 
     def draw(self, screen, player):
@@ -55,11 +55,11 @@ class CharacterMenu:
         if self.selected_tab == "Quests":
             self.quests.draw(screen, content_x, content_y)
         elif self.selected_tab == "Inventory":
-            self.inventory.draw(screen, content_x, content_y, player)
+            self.character_menu_inventory.draw(screen, content_x, content_y, player)
         elif self.selected_tab == "Equipment":
             self.equipment.draw(screen, content_x, content_y, player)
 
-    def handle_event(self, event):
+    def handle_event(self, event, player):
         # Handle character menu specific events for switching tabs and sub-tabs
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
@@ -67,13 +67,10 @@ class CharacterMenu:
             elif event.key == pygame.K_e:
                 self.switch_tab("right")  # Move to the next tab with E
             elif self.selected_tab == "Inventory":  # Handle sub-tab switching for Inventory
-                if event.key == pygame.K_a:
-                    self.inventory.switch_sub_tab("left")  # Move to the previous sub-tab with A
-                elif event.key == pygame.K_d:
-                    self.inventory.switch_sub_tab("right")  # Move to the next sub-tab with D
+                self.character_menu_inventory.handle_event(event, player)
 
     def switch_tab(self, direction):
-        # Switch tabs based on direction: "left" for Q key, "right" for E key
+        # Switch tabs based on direction: "left" for Q key, "righet" for E key
         current_index = self.tabs.index(self.selected_tab)
         if direction == "left":
             next_index = (current_index - 1) % len(self.tabs)

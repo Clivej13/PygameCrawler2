@@ -62,7 +62,7 @@ class Game:
 
             # Handle character menu specific events if the menu is open
             if self.character_menu.menu_open:
-                self.character_menu.handle_event(event)
+                self.character_menu.handle_event(event, self.map.player)
 
     def update(self):
         # Update map (player, enemies, and any other entities) only if menu is not open

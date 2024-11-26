@@ -236,3 +236,7 @@ class Player:
                 if item and item.src:
                     equipped_sprite = StaticSprite(self.sprite.rect.x, self.sprite.rect.y, self.sprite.rect.width, self.sprite.rect.height, item.src)
                     self.equipped_sprites.append(equipped_sprite)
+
+    def equip_item(self, slot, item_id):
+        # Equip the item in the specified slot
+        self.equipped.equip_item(slot, item_id)

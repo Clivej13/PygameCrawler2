@@ -1,17 +1,34 @@
 {
   "items": [
     {
-      "id": 2,
-      "name": "Leather Armor",
+      "id": 1,
+      "name": "Leather Body",
       "type": "Light Armor",
       "weight": 7.0,
       "value": 20,
       "armor_rating": 10,
-      "tier": "Uncommon",
+      "tier": "Common",
       "required_skill": [
         "Strength",
         3
-      ]
+      ],
+      "src": "adam_leather_body.png",
+      "equip_slot": "body"
+    },
+    {
+      "id": 2,
+      "name": "Leather Legs",
+      "type": "Light Armor",
+      "weight": 7.0,
+      "value": 20,
+      "armor_rating": 10,
+      "tier": "Common",
+      "required_skill": [
+        "Strength",
+        3
+      ],
+      "src": "adam_leather_legs.png",
+      "equip_slot": "legs"
     },
     {
       "id": 3,
@@ -54,7 +71,8 @@
         "Strength",
         3
       ],
-      "src": "adam_iron_body.png"
+      "src": "adam_iron_body.png",
+      "equip_slot": "body"
     },
     {
       "id": 7,
@@ -68,7 +86,8 @@
         "Strength",
         3
       ],
-      "src": "adam_iron_legs.png"
+      "src": "adam_iron_legs.png",
+      "equip_slot": "legs"
     },
     {
       "id": 8,

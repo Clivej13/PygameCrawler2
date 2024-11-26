@@ -2,6 +2,7 @@
 
 import pygame
 
+
 class CharacterMenuInventory:
     def __init__(self, screen_width, item_catalog):
         self.screen_width = screen_width
@@ -10,6 +11,39 @@ class CharacterMenuInventory:
         self.sub_tabs = ["All", "Weapons", "Armor", "Consumable", "Valuables"]
         self.selected_sub_tab = "All"  # Start with "All" items selected
         self.selected_item_index = 0
+
+    def handle_event(self, event, player):
+        # Handle user input for inventory interactions
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_s:
+                # Navigate down the inventory list
+                self.selected_item_index = (self.selected_item_index + 1) % len(player.inventory.get_items())
+            elif event.key == pygame.K_w:
+                # Navigate up the inventory list
+                self.selected_item_index = (self.selected_item_index - 1) % len(player.inventory.get_items())
+            elif event.key == pygame.K_RETURN:
+                # Equip the selected item
+                item_ids = player.inventory.get_items()
+                if item_ids:
+                    selected_item_id = item_ids[self.selected_item_index]
+                    selected_item = self.item_catalog.get_item_by_id(selected_item_id)
+                    if selected_item and selected_item.equip_slot:
+                        # Equip the item
+                        player.equipped.equip_item(selected_item.equip_slot, selected_item_id, player.inventory)
+                        player.inventory.remove_item(selected_item_id)
+                        player.update_equipped_sprites()
+
+    def switch_sub_tab(self, direction):
+        # Switch sub-tabs within Inventory based on direction: "left" for A key, "right" for D key
+        current_index = self.sub_tabs.index(self.selected_sub_tab)
+        if direction == "left":
+            next_index = (current_index - 1) % len(self.sub_tabs)
+        elif direction == "right":
+            next_index = (current_index + 1) % len(self.sub_tabs)
+        else:
+            return  # Invalid direction
+        self.selected_sub_tab = self.sub_tabs[next_index]
+        self.selected_item_index = 0  # Reset item selection when switching sub-tabs
 
     def draw(self, screen, x, y, player):
         # Draw the sub-tabs for Inventory with a smaller font
@@ -46,10 +80,10 @@ class CharacterMenuInventory:
                 if item:
                     # Filter items based on sub-tab selection
                     if self.selected_sub_tab == "All" or \
-                       (self.selected_sub_tab == "Weapons" and item.type in ["One Handed", "Two Handed"]) or \
-                       (self.selected_sub_tab == "Armor" and item.type == "Light Armor") or \
-                       (self.selected_sub_tab == "Consumable" and item.type == "Consumable") or \
-                       (self.selected_sub_tab == "Valuables" and item.type == "Valuable"):
+                            (self.selected_sub_tab == "Weapons" and item.type in ["One Handed", "Two Handed"]) or \
+                            (self.selected_sub_tab == "Armor" and item.type == "Light Armor") or \
+                            (self.selected_sub_tab == "Consumable" and item.type == "Consumable") or \
+                            (self.selected_sub_tab == "Valuables" and item.type == "Valuable"):
                         filtered_items.append(item)
 
             if not filtered_items:
@@ -57,17 +91,10 @@ class CharacterMenuInventory:
                 screen.blit(inventory_text, (x, item_y))
             else:
                 for i, item in enumerate(filtered_items):
-                    item_text = self.sub_menu_font.render(f"{i+1}. {item.name} - {item.type} (Value: {item.value} gold)", True, (255, 255, 255))
+                    item_text = self.sub_menu_font.render(f"{i + 1}. {item.name} - {item.type} (Value: {item.value} gold)", True, (255, 255, 255))
                     screen.blit(item_text, (x, item_y + i * 30))
 
-    def switch_sub_tab(self, direction):
-        # Switch sub-tabs within Inventory based on direction: "left" for A key, "right" for D key
-        current_index = self.sub_tabs.index(self.selected_sub_tab)
-        if direction == "left":
-            next_index = (current_index - 1) % len(self.sub_tabs)
-        elif direction == "right":
-            next_index = (current_index + 1) % len(self.sub_tabs)
-        else:
-            return  # Invalid direction
-        self.selected_sub_tab = self.sub_tabs[next_index]
-        self.selected_item_index = 0  # Reset item selection when switching sub-tabs
+            for i, item in enumerate(filtered_items):
+                color = (255, 255, 0) if i == self.selected_item_index else (255, 255, 255)
+                item_text = self.sub_menu_font.render(f"{i + 1}. {item.name} - {item.type} (Value: {item.value} gold)", True, color)
+                screen.blit(item_text, (x, item_y + i * 30))

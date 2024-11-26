@@ -26,7 +26,8 @@ class ItemCatalog:
             item_id=item_dict.get("id"),
             tier=item_dict.get("tier"),
             required_skill=tuple(item_dict["required_skill"]) if "required_skill" in item_dict else None,
-            src=item_dict.get("src")  # Add image source if available
+            src=item_dict.get("src"),
+            equip_slot=item_dict.get("equip_slot")
         )
 
     def get_item_by_id(self, item_id):

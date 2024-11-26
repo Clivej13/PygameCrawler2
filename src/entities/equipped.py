@@ -22,13 +22,6 @@ class Equipped:
         else:
             print(f"Error: Slot '{slot}' does not exist.")
 
-    def unequip_item(self, slot):
-        if slot in self.slots:
-            self.slots[slot] = 0
-            print(f"Unequipped item from slot '{slot}'.")
-        else:
-            print(f"Error: Slot '{slot}' does not exist.")
-
     def get_equipped_items(self):
         return self.slots
 
@@ -46,3 +39,19 @@ class Equipped:
         for item_id in self.slots.items():
             items.append(item_id)
         return items
+
+    def equip_item(self, slot, item_id, inventory):
+        if slot in self.slots:
+            # Check if there is already an item in the slot
+            current_item = self.slots[slot]
+            if current_item != 0:  # 0 means the slot is empty
+                # Add the current item back to the inventory
+                inventory.add_item(current_item)
+                print(f"Moved item {current_item} from slot '{slot}' to inventory.")
+
+            # Equip the new item
+            self.slots[slot] = item_id
+            print(f"Equipped item {item_id} in slot '{slot}'.")
+        else:
+            print(f"Invalid slot '{slot}' for equipping item {item_id}.")
+
